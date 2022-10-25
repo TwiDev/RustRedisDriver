@@ -5,18 +5,17 @@ use dotenv::dotenv;
 
 const DRIVER_VERSION: &str = "1.0.2";
 
-extern "C" {
-    static mut REDIS_HOST_NAME: String;
-    static mut REDIS_PASSWORD: String;
-    static mut IS_TLS: String;
-}
+static mut REDIS_HOST_NAME: String = String::new();
+static mut REDIS_PASSWORD: String = String::new();
+static mut IS_TLS: String = String::new();
 
 fn main() {
     println!("Loading Rustandalone Redis Driver {:?}", DRIVER_VERSION);
 
     dotenv().expect(".env file not found");
+
     unsafe {
-        REDIS_HOST_NAME = env::var("REDIS_HOST_NAME").expect("missing environment variable REDIS_HOSTNAME");
+        REDIS_HOST_NAME = env::var("REDIS_HOST_NAME").expect("missing environment variable REDIS_HOST_NAME");
         REDIS_PASSWORD = env::var("REDIS_PASSWORD").expect("missing environment variable REDIS_PASSWORD");
         //Check if redis server needs a secure link for connection
         IS_TLS = match env::var("IS_TLS") {
@@ -27,6 +26,7 @@ fn main() {
 
     test_connection();
 }
+
 
 fn test_connection() {
     let connection:Connection = redis_driver::connect();
